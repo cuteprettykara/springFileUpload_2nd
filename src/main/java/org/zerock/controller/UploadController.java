@@ -68,7 +68,7 @@ public class UploadController {
 	public void uploadAjax() {
 	}
 	
-	@RequestMapping(value="/uploadAjax", method=RequestMethod.POST)
+	@RequestMapping(value="/uploadAjax", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
 	public ResponseEntity<String> uploadAjax(MultipartFile file) {
 		logger.info("originalName: {}", file.getOriginalFilename());
 		logger.info("size: {}", file.getSize());
