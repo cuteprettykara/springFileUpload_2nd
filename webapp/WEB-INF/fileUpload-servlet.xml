@@ -29,9 +29,4 @@
 		p:maxUploadSize="10485760"
 	/>
 	
-	<beans:bean id="uploadPath" class="java.lang.String" 
-		c:_0 = "c:\\temp\\upload"
-	/>
-		
-	
 </beans:beans>
