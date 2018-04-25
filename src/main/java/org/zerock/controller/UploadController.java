@@ -31,7 +31,9 @@ public class UploadController {
 
 	@RequestMapping(value="/uploadForm", method=RequestMethod.GET)
 	public void uploadForm() {
-		uploadPath = context.getRealPath("/") + UPLOAD_DIRECTORY;
+//		uploadPath = context.getRealPath("/") + UPLOAD_DIRECTORY;
+		uploadPath = System.getProperty("user.home") + File.separator + UPLOAD_DIRECTORY;
+		
 		logger.info("uploadPath : {}", uploadPath);
 	}
 	
