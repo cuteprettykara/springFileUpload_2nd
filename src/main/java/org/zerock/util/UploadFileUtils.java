@@ -28,7 +28,7 @@ public class UploadFileUtils {
 		File target = new File(uploadPath + savedPath, savedName);
 		FileCopyUtils.copy(fileData, target);
 		
-		// 
+		// 이미지 파일의 경우 썸네일 이미지 생성
 		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
 		String uploadedFileName = null;
 		

@@ -17,6 +17,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.zerock.util.UploadFileUtils;
 
 @Controller
 public class UploadController {
@@ -69,11 +70,13 @@ public class UploadController {
 	}
 	
 	@RequestMapping(value="/uploadAjax", method=RequestMethod.POST, produces="text/plain;charset=UTF-8")
-	public ResponseEntity<String> uploadAjax(MultipartFile file) {
+	public ResponseEntity<String> uploadAjax(MultipartFile file) throws Exception {
 		logger.info("originalName: {}", file.getOriginalFilename());
 		logger.info("size: {}", file.getSize());
 		logger.info("contentType: {}", file.getContentType());
 		
-		return new ResponseEntity<>(file.getOriginalFilename(), HttpStatus.CREATED);
+		String savedName= UploadFileUtils.uploadFile(uploadPath, file.getOriginalFilename(), file.getBytes());
+		
+		return new ResponseEntity<>(savedName, HttpStatus.CREATED);
 	}
 }
