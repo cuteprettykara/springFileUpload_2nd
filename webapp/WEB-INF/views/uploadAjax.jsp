@@ -78,20 +78,37 @@
 							+ "<a href='displayFile?fileName=" + getImageLink(data) + "' target='_blank'>"
 						 	+ "<img src='displayFile?fileName=" + data + "' />"
 						 	+ "</a>"
-						 	+ data 
+						 	+ "<small data-src='" + data + "' style='cursor: pointer'>X</small>"
 						 	+ "</div>";
 					} else {
 						str = "<div>"
 							+ "<a href='displayFile?fileName=" + data + "'>"
 							+ getOriginalFileName(data)
 							+ "</a>"
+							+ "<small data-src='" + data + "' style='cursor: pointer'>X</small>"
 						 	+ "</div>";
 					}
 					
 					$(".uploadedList").append(str);
 				}
 			});
-		});	
+		});
+		
+		$(".uploadedList").on("click", "small", function(e) {
+			var objThis = $(this);
+			
+			$.ajax({
+				url: "deleteFile",
+				type: "post",
+				data: {fileName:$(this).attr("data-src")},
+				dataType: "text",
+				success: function(result) {
+					if (result == "deleted") {
+						objThis.parent("div").remove();
+					}
+				}
+			});
+		})
 	});
 </script>
 
