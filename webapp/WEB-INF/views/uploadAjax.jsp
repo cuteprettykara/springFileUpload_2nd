@@ -28,6 +28,22 @@
 		return fileName.match(pattern);
 	}
 	
+	function getOriginalFileName(fileName) {
+		if (checkIamgeType(fileName)) { return; }
+		
+		var idx = fileName.indexOf("_") + 1;
+		return fileName.substr(idx);
+	}
+	
+	function getImageLink(fileName) {
+		if (!checkIamgeType(fileName)) { return; }
+		
+		var front = fileName.substr(0, 12);
+		var end = fileName.substr(14);
+		
+		return front + end;
+	}
+	
 	$(document).ready(function() {
 	 	$(".fileDrop").on("dragenter dragover", function(e) {
 			e.preventDefault();
@@ -54,14 +70,21 @@
 				success: function(data) {
 					var str =  "";
 					
+					console.log(data);
+					console.log(checkIamgeType(data));
+					
 					if (checkIamgeType(data)) {
 						str = "<div>"
+							+ "<a href='displayFile?fileName=" + getImageLink(data) + "' target='_blank'>"
 						 	+ "<img src='displayFile?fileName=" + data + "' />"
+						 	+ "</a>"
 						 	+ data 
 						 	+ "</div>";
 					} else {
 						str = "<div>"
-							+ data 
+							+ "<a href='displayFile?fileName=" + data + "'>"
+							+ getOriginalFileName(data)
+							+ "</a>"
 						 	+ "</div>";
 					}
 					
