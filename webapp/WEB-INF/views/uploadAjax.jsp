@@ -24,21 +24,18 @@
 <!-- handlebars -->
 <script src="/resources/handlebars/handlebars-v4.0.11.js"></script>
 
-<script id="imageTemplate" type="text/x-handlebars-template">
+<script id="template" type="text/x-handlebars-template">
 	<div>
-		<a href='displayFile?fileName={{imageLink}}' target='_blank'>
-			<img src='displayFile?fileName={{data}}' />
-		</a>
-		<small data-src='{{data}}' style='cursor:pointer'>X</small>
-	</div>
-</script>
+	{{#if isImage}}
+		<a href='{{getLink}}' target='_blank'>
+	{{else}}
+		<a href='{{getLink}}'>
+	{{/if}}
 
-<script id="fileTemplate" type="text/x-handlebars-template">
-	<div>
-		<a href='displayFile?fileName={{data}}'>
-			{{originalFileName}}
+			<img src='{{imgsrc}}' />
 		</a>
-		<small data-src='{{data}}' style='cursor:pointer'>X</small>
+		<span>{{fileName}}</span>
+		<small data-src='{{fullName}}' style='cursor:pointer'>X</small>
 	</div>
 </script>
 
@@ -49,45 +46,44 @@
 		return fileName.match(pattern);
 	}
 	
-	function getOriginalFileName(fileName) {
-		if (checkIamgeType(fileName)) { return; }
+	function getFileInfo(fullName) {
+		var fileName, imgsrc, getLink;
+		var fileLink;
+		var isImage = false;
 		
-		var idx = fileName.indexOf("_") + 1;
-		return fileName.substr(idx);
-	}
-	
-	function getImageLink(fileName) {
-		if (!checkIamgeType(fileName)) { return; }
+		if (checkIamgeType(fullName)) {
+			imgsrc = "/displayFile?fileName=" + fullName;
+			fileLink = fullName.substr(14);
+			
+			var front = fullName.substr(0, 12);
+			var end = fullName.substr(14);
+			
+			getLink = "/displayFile?fileName=" + front + end;
+			
+			isImage = true;
+			
+		} else {
+			imgsrc = "/resources/img/file.png";
+			fileLink = fullName.substr(12);
+			
+			getLink = "/displayFile?fileName=" + fullName;
+		}
 		
-		var front = fileName.substr(0, 12);
-		var end = fileName.substr(14);
+		fileName = fileLink.substr(fileLink.indexOf("_")+1);
+		console.log("fileName: [" + fileName + "]");
 		
-		return front + end;
-	}
-	
-	function printImage(data, target, templateObject) {
-		var template = Handlebars.compile(templateObject.html());
-		var context = {
-			data: data, 
-			imageLink: getImageLink(data)
+		return {
+			fileName: fileName,
+			imgsrc: imgsrc,
+			getLink: getLink,
+			fullName: fullName,
+			isImage : isImage
 		};
-		var html = template(context);
-		
-		target.append(html);
-	}
-	
-	function printFile(data, target, templateObject) {
-		var template = Handlebars.compile(templateObject.html());
-		var context = {
-			data: data, 
-			originalFileName: getOriginalFileName(data)
-		};
-		var html = template(context);
-		
-		target.append(html);
 	}
 	
 	$(document).ready(function() {
+		var template = Handlebars.compile($("#template").html());
+		
 	 	$(".fileDrop").on("dragenter dragover", function(e) {
 			e.preventDefault();
 		});
@@ -111,17 +107,11 @@
 				processData: false,
 				contentType: false,
 				success: function(data) {
-					var str =  "";
+					var fileInfo =  getFileInfo(data);
 					
-					console.log(data);
-					console.log(checkIamgeType(data));
+					var html = template(fileInfo);
 					
-					if (checkIamgeType(data)) {
-						printImage(data, $(".uploadedList"), $('#imageTemplate'));
-						
-					} else {
-						printFile(data, $(".uploadedList"), $('#fileTemplate'));
-					}
+					$(".uploadedList").append(html);
 				}
 			});
 		});
